@@ -1,3 +1,5 @@
+using AutoMapper;
+using Bangla.Services.CouponAPI;
 using Bangla.Services.CouponAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper); // available throughout the lifecycle
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
