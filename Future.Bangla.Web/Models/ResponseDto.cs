@@ -1,4 +1,5 @@
-﻿namespace Future.Bangla.Web.Models
+﻿
+namespace Future.Bangla.Web.Models
 {
     public class ResponseDto
     {
