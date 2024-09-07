@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{DC30EBD8-394C-4433-A158-BF63548CAE57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangla.Services.CouponAPI", "Bangla.Services.CouponAPI\Bangla.Services.CouponAPI.csproj", "{200B7C5D-B741-4749-A025-ADCDBE88B870}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangla.Services.CouponAPI", "Bangla.Services.CouponAPI\Bangla.Services.CouponAPI.csproj", "{200B7C5D-B741-4749-A025-ADCDBE88B870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Future.Bangla.Web", "Future.Bangla.Web\Future.Bangla.Web.csproj", "{2507F9E3-7811-4357-A1D1-59B658B5D086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +25,17 @@ Global
 		{200B7C5D-B741-4749-A025-ADCDBE88B870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{200B7C5D-B741-4749-A025-ADCDBE88B870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{200B7C5D-B741-4749-A025-ADCDBE88B870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2507F9E3-7811-4357-A1D1-59B658B5D086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2507F9E3-7811-4357-A1D1-59B658B5D086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2507F9E3-7811-4357-A1D1-59B658B5D086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2507F9E3-7811-4357-A1D1-59B658B5D086}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{200B7C5D-B741-4749-A025-ADCDBE88B870} = {DC30EBD8-394C-4433-A158-BF63548CAE57}
+		{2507F9E3-7811-4357-A1D1-59B658B5D086} = {3959EB6E-7FA8-4F60-899D-41CAE0E64DE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {776C1706-DEEC-4528-BE19-A9589823DF5F}
