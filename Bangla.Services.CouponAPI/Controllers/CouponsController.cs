@@ -58,6 +58,91 @@ namespace Bangla.Services.CouponAPI.Controllers
 
             return _response;
         }
+
+        [HttpGet]
+        [Route("GetByCode/{code}")]
+        public ResponseDto GetByCode(string couponCode)
+        {
+            try
+            {
+                Coupon coupon = _db.Coupons.FirstOrDefault(c => c.CouponCode.ToLower() == couponCode.ToLower());
+                
+                if(coupon is null)
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "not a valid code";
+                }
+                _response.Result = _mapper.Map<CouponDto>(coupon); ;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Result = ex.Message;
+            }
+
+            return _response;
+        }
+
+
+        [HttpPost]
+        public ResponseDto Post([FromBody] CouponDto coupon)
+        {
+            try
+            {
+                var couponObj = _mapper.Map<Coupon>(coupon);
+                _db.Coupons.Add(couponObj);
+                _db.SaveChanges();
+
+                _response.Result = _mapper.Map<CouponDto>(couponObj); ;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Result = ex.Message;
+            }
+
+            return _response;
+        }
+
+        [HttpPut]
+        public ResponseDto Update([FromBody] CouponDto coupon)
+        {
+            try
+            {
+                var couponObj = _mapper.Map<Coupon>(coupon);
+                _db.Coupons.Update(couponObj);
+                _db.SaveChanges();
+
+                _response.Result = _mapper.Map<CouponDto>(couponObj); ;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Result = ex.Message;
+            }
+
+            return _response;
+        }
+
+        [HttpDelete]
+        public ResponseDto Delete(int id)
+        {
+            try
+            {
+                var coupon = _db.Coupons.FirstOrDefault(c => c.CouponId == id);
+                _db.Coupons.Remove(coupon);
+                _db.SaveChanges();
+
+                _response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Result = ex.Message;
+            }
+
+            return _response;
+        }
     }
 
 
