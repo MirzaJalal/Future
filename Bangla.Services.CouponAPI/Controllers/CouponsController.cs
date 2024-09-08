@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bangla.Services.CouponAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/coupons")]
     [ApiController]
     public class CouponsController : ControllerBase
     {
