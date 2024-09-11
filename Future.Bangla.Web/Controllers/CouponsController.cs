@@ -24,5 +24,10 @@ namespace Future.Bangla.Web.Controllers
             }
             return View(list);
         }
-    }
+
+		public async Task<IActionResult> CouponCreate()
+		{
+			return View();
+		}
+	}
 }
