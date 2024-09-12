@@ -24,6 +24,10 @@ namespace Future.Bangla.Web.Controllers
             {
                 list = JsonConvert.DeserializeObject<List<CouponDto>>(Convert.ToString(response.Result));
             }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
             return View(list);
         }
 
@@ -41,7 +45,12 @@ namespace Future.Bangla.Web.Controllers
 
                 if (responseDto != null && responseDto.IsSuccess)
                 {
+                    TempData["success"] = "Coupon Created Successfully!";
                     return RedirectToAction(nameof(CouponIndex));
+                }
+                else
+                {
+                    TempData["error"] = responseDto?.Message;
                 }
 
             }
@@ -57,8 +66,12 @@ namespace Future.Bangla.Web.Controllers
 				CouponDto? coupon = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(response.Result));
                 return View(coupon);
 			}
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
 
-			return NotFound();
+            return NotFound();
         }
 
         [HttpPost]
@@ -68,7 +81,12 @@ namespace Future.Bangla.Web.Controllers
 
             if (response != null && response.IsSuccess)
             {
+                TempData["success"] = "Coupon Deleted Successfully!";
                 return RedirectToAction(nameof(CouponIndex));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
             }
 
             return View(coupon);
