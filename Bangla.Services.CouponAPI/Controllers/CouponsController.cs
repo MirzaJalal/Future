@@ -2,13 +2,11 @@
 using Bangla.Services.CouponAPI.Data;
 using Bangla.Services.CouponAPI.Models;
 using Bangla.Services.CouponAPI.Models.Dto;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bangla.Services.CouponAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/coupons")]
     [ApiController]
     public class CouponsController : ControllerBase
     {
@@ -125,6 +123,7 @@ namespace Bangla.Services.CouponAPI.Controllers
         }
 
         [HttpDelete]
+        [Route("{id:int}")]
         public ResponseDto Delete(int id)
         {
             try
