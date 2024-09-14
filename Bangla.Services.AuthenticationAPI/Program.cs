@@ -1,5 +1,7 @@
 using Bangla.Services.AuthenticationAPI.Data;
 using Bangla.Services.AuthenticationAPI.Models;
+using Bangla.Services.AuthenticationAPI.Service;
+using Bangla.Services.AuthenticationAPI.Service.IService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +18,8 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
                                                            .AddDefaultTokenProviders();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

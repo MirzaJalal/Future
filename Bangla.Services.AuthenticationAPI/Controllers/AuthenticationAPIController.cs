@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Bangla.Services.AuthenticationAPI.Models.Dto;
+using Bangla.Services.AuthenticationAPI.Service.IService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bangla.Services.AuthenticationAPI.Controllers
@@ -7,10 +9,27 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
     [ApiController]
     public class AuthenticationAPIController : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<IActionResult> Registration()
+        private readonly IAuthService _authService;
+        protected ResponseDto _resposne;
+
+        public AuthenticationAPIController(IAuthService authService)
         {
-            return Ok();
+            _authService = authService;
+            _resposne = new();
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Registration([FromBody] RegistrationRequestDto registrationDto)
+        {
+            var errorMessage = await _authService.Register(registrationDto);
+            
+            if(!string.IsNullOrEmpty(errorMessage))
+            {
+                _resposne.IsSuccess = false;
+                _resposne.Message = errorMessage;
+                return BadRequest(_resposne);
+            }
+            return Ok(_resposne);
         }
 
         [HttpPost("login")]
