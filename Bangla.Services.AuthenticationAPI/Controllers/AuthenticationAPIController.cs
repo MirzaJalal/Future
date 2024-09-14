@@ -1,6 +1,5 @@
 ﻿using Bangla.Services.AuthenticationAPI.Models.Dto;
 using Bangla.Services.AuthenticationAPI.Service.IService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bangla.Services.AuthenticationAPI.Controllers
@@ -33,9 +32,21 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
-            return Ok();
+            LoginResponseDto loginResponse = await _authService.Login(loginRequestDto);
+
+            if(loginResponse is null)
+            {
+                _resposne.IsSuccess = false;
+                _resposne.Message = "Username or Password is incorrect!";
+
+                return BadRequest(_resposne);
+            }
+
+            _resposne.Result = loginResponse;
+            _resposne.IsSuccess = true;
+            return Ok(_resposne);
         }
     }
 }
