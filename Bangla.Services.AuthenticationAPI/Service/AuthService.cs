@@ -12,16 +12,19 @@ namespace Bangla.Services.AuthenticationAPI.Service
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<AuthService> _logger;
+        private readonly IJwtTokenService _jwtTokenService;
 
         public AuthService(ApplicationDbContext context, 
            UserManager<ApplicationUser> userManager,
            RoleManager<IdentityRole> roleManager,
+           IJwtTokenService jwtTokenService,
            ILogger<AuthService> logger
            )
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _jwtTokenService = jwtTokenService;
             _logger = logger;
         }
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
@@ -38,6 +41,8 @@ namespace Bangla.Services.AuthenticationAPI.Service
             else
             {
                 // TODO: JWT Token
+                string token = _jwtTokenService.GenerateToken(user);
+
                 UserDto userDto = new()
                 {
                     Email = user.Email,
@@ -46,7 +51,7 @@ namespace Bangla.Services.AuthenticationAPI.Service
                     PhoneNumber = user.PhoneNumber
                 };
                 
-                LoginResponseDto loginResponseDto = new LoginResponseDto() { User = userDto, Token = "" };
+                LoginResponseDto loginResponseDto = new LoginResponseDto() { User = userDto, Token = token };
                 
                 return loginResponseDto;
             }
