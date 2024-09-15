@@ -27,6 +27,43 @@ namespace Bangla.Services.AuthenticationAPI.Service
             _jwtTokenService = jwtTokenService;
             _logger = logger;
         }
+
+        public async Task<bool> AssignToRole(string email, string role)
+        {
+            try
+            {
+                ApplicationUser? user = _context.ApplicationUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+
+                if (user is not null)
+                {
+                    // Check if the role exists
+                    var roleExists = await _roleManager.RoleExistsAsync(role);
+
+                    if (!roleExists)
+                    {
+                        // Create the role if it doesn't exist
+                        await _roleManager.CreateAsync(new IdentityRole(role));
+                    }
+
+                    // Assign the role to the user
+                     await _userManager.AddToRoleAsync(user, role);
+
+                     return true;
+                }
+
+                return false;
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while assigning role {Role} to user {Email}", role, email);
+
+                return false;
+            }
+        }
+
+
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
            ApplicationUser user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
@@ -97,5 +134,7 @@ namespace Bangla.Services.AuthenticationAPI.Service
             }
             return "error encountered!!";
         }
+
+
     }
 }

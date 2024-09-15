@@ -48,5 +48,21 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
             _resposne.IsSuccess = true;
             return Ok(_resposne);
         }
+
+        [HttpPost("assignRole")]
+        public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto registrationRequestDto)
+        {
+            bool assignRoleSuccessfull = await _authService.AssignToRole(registrationRequestDto.Email, registrationRequestDto.Role.ToUpper());
+
+            if (!assignRoleSuccessfull)
+            {
+                _resposne.IsSuccess = false;
+                _resposne.Message = "Error Encountered when assiging role!";
+
+                return BadRequest(_resposne);
+            }
+
+            return Ok(_resposne);
+        }
     }
 }
