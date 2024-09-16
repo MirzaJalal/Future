@@ -4,6 +4,9 @@
     {
         public static string CouponAPIBase { get; set; } // we need the url of the API
         public static string AuthenticationAPIBase { get; set; } // we need the url of the API
+
+        public const string RoleAdmin = "Admin";
+        public const string RoleCustomer = "Customer";
         public enum ApiType
         {
             GET,
