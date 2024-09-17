@@ -3,6 +3,7 @@ using Future.Bangla.Web.Service.IService;
 using Future.Bangla.Web.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace Future.Bangla.Web.Controllers
 {
@@ -14,12 +15,30 @@ namespace Future.Bangla.Web.Controllers
             _authService = authService;
         }
         [HttpGet]
-        public async Task<IActionResult> Login(LoginRequestDto loginRequest)
+        public async Task<IActionResult> Login()
         {
 
            LoginRequestDto loginRequestDto = new();
 
            return View(loginRequestDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
+        {
+            ResponseDto? responseDto = await _authService.LoginAsync(loginRequestDto);
+
+            if (responseDto != null && responseDto.IsSuccess)
+            {
+                LoginResponseDto? loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
+
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError("CustomError", responseDto.Message);
+                return View();
+            }
         }
 
         [HttpGet]
