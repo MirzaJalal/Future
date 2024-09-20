@@ -77,8 +77,9 @@ namespace Bangla.Services.AuthenticationAPI.Service
 
             else
             {
-                // TODO: JWT Token
-                string token = _jwtTokenService.GenerateToken(user);
+                // JWT Token Generator
+                IList<string> roles = await _userManager.GetRolesAsync(user); // helper method from IdentityUser
+                string token = _jwtTokenService.GenerateToken(user, roles);
 
                 UserDto userDto = new()
                 {
