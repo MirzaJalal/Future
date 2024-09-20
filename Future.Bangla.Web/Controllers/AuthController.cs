@@ -126,6 +126,9 @@ namespace Future.Bangla.Web.Controllers
 
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
+            // Extracting all the claims from database to send request to the auth API
+
+
 
             identity.AddClaim(new Claim(JwtRegisteredClaimNames.Email, 
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
@@ -139,6 +142,9 @@ namespace Future.Bangla.Web.Controllers
 
             identity.AddClaim(new Claim(ClaimTypes.Name,
                 jwt.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Email).Value));
+
+            identity.AddClaim(new Claim(ClaimTypes.Role,
+               jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
 
             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
