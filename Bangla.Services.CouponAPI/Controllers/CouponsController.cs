@@ -2,12 +2,14 @@
 using Bangla.Services.CouponAPI.Data;
 using Bangla.Services.CouponAPI.Models;
 using Bangla.Services.CouponAPI.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bangla.Services.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
+    [Authorize]
     public class CouponsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
