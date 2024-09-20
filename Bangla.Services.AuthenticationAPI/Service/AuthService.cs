@@ -70,7 +70,7 @@ namespace Bangla.Services.AuthenticationAPI.Service
 
             bool passwordMatched = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-            if (user is null && passwordMatched == false)
+            if (user is null || passwordMatched == false)
             {
                 return new LoginResponseDto() { User = null , Token = ""};
             }
