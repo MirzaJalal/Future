@@ -4,6 +4,6 @@ namespace Bangla.Services.AuthenticationAPI.Service.IService
 {
     public interface IJwtTokenService
     {
-        string GenerateToken(ApplicationUser application);
+        string GenerateToken(ApplicationUser application, IEnumerable<string> roles);
     }
 }
