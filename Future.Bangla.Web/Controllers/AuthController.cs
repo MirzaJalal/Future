@@ -46,7 +46,8 @@ namespace Future.Bangla.Web.Controllers
             }
             else
             {
-                ModelState.AddModelError("CustomError", responseDto.Message);
+                TempData["error"] = responseDto.Message;
+                //ModelState.AddModelError("CustomError", responseDto.Message);
                 return View();
             }
         }
@@ -93,6 +94,10 @@ namespace Future.Bangla.Web.Controllers
                     return RedirectToAction(nameof(Login));
                 }
             
+            }
+            else
+            {
+                TempData["error"] = responseDto.Message;
             }
 
             var roleList = new List<SelectListItem>()
