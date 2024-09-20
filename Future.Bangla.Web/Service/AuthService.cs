@@ -32,7 +32,7 @@ namespace Future.Bangla.Web.Service
                 ApiType = ApiType.POST,
                 Data = loginRequestDto,
                 Url = SD.AuthenticationAPIBase + "/api/auth/login",
-            });
+            }, withBearer: false);
         }
 
         public async Task<ResponseDto?> RegisterAsync(RegistrationRequestDto registrationRequestDto)
@@ -42,7 +42,7 @@ namespace Future.Bangla.Web.Service
                 ApiType = ApiType.POST,
                 Data = registrationRequestDto,
                 Url = SD.AuthenticationAPIBase + "/api/auth/register",
-            });
+            }, withBearer: false);
         }
     }
 }
