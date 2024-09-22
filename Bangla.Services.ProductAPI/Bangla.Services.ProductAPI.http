@@ -1,0 +1,6 @@
+@Bangla.Services.ProductAPI_HostAddress = http://localhost:5130
+
+GET {{Bangla.Services.ProductAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
