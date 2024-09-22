@@ -1,0 +1,96 @@
+﻿using Future.Bangla.Web.Models;
+using Future.Bangla.Web.Service;
+using Future.Bangla.Web.Service.IService;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace Future.Bangla.Web.Controllers
+{
+    public class ProductsController : Controller
+    {
+        private readonly IProductService _productService;
+        public ProductsController(IProductService productService)
+        {
+            _productService = productService;
+        }
+        public async Task<IActionResult> ProductIndex()
+        {
+            List<ProductDto> list = new List<ProductDto>();
+
+            ResponseDto? response = await _productService.GetAllProductAsync();
+
+            if (response != null && response.IsSuccess)
+            {
+                list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(response.Result));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(list);
+        }
+
+		public async Task<IActionResult> ProductCreate()
+		{
+			return View();
+		}
+
+        [HttpPost]
+        public async Task<IActionResult> ProductCreate(ProductDto product)
+        {
+            if (ModelState.IsValid)
+            {
+                var responseDto = await _productService.CreateProductsAsync(product);
+
+                if (responseDto != null && responseDto.IsSuccess)
+                {
+                    TempData["success"] = "Product Created Successfully!";
+                    return RedirectToAction(nameof(ProductIndex));
+                }
+                else
+                {
+                    TempData["error"] = responseDto?.Message;
+                }
+
+            }
+            return View(product);
+        }
+
+        public async Task<IActionResult> ProductDelete(int productId)
+        {
+			ResponseDto? response = await _productService.GetProductByIdAsync(productId);
+
+			if (response != null && response.IsSuccess)
+			{
+				ProductDto? product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
+                return View(product);
+			}
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProductDelete(ProductDto product)
+        {
+            ResponseDto? response = await _productService.DeleteProductAsync(product.ProductId);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Product Deleted Successfully!";
+                return RedirectToAction(nameof(ProductIndex));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            return View(product);
+        }
+    }
+
+}
