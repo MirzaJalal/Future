@@ -17,7 +17,7 @@ namespace Bangla.Services.AuthenticationAPI.Service
             _jwtOptions = jwtOptions.Value;
         }
 
-        public string GenerateToken(ApplicationUser applicationUser)
+        public string GenerateToken(ApplicationUser applicationUser, IEnumerable<string> roles)
         {
             // 1. Define the handler, security key and credentials
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -32,7 +32,9 @@ namespace Bangla.Services.AuthenticationAPI.Service
                 new Claim(JwtRegisteredClaimNames.Sub, applicationUser.Id),  // Token ID
                 new Claim(JwtRegisteredClaimNames.Name, applicationUser.UserName)
             };
-
+            
+            // adding roles to a user
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             // 3. Define the token properties (expiry, issuer, audience)
             var tokenDescriptor = new SecurityTokenDescriptor

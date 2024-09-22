@@ -36,7 +36,7 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
         {
             LoginResponseDto loginResponse = await _authService.Login(loginRequestDto);
 
-            if(loginResponse is null)
+            if (loginResponse.User == null)
             {
                 _resposne.IsSuccess = false;
                 _resposne.Message = "Username or Password is incorrect!";

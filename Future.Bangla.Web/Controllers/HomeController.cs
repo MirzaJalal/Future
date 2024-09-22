@@ -1,4 +1,6 @@
 using Future.Bangla.Web.Models;
+using Future.Bangla.Web.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -18,6 +20,7 @@ namespace Future.Bangla.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = SD.RoleAdmin)]
         public IActionResult Privacy()
         {
             return View();

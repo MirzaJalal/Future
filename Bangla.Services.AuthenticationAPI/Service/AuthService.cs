@@ -70,15 +70,16 @@ namespace Bangla.Services.AuthenticationAPI.Service
 
             bool passwordMatched = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-            if (user is null && passwordMatched == false)
+            if (user is null || passwordMatched == false)
             {
                 return new LoginResponseDto() { User = null , Token = ""};
             }
 
             else
             {
-                // TODO: JWT Token
-                string token = _jwtTokenService.GenerateToken(user);
+                // JWT Token Generator
+                IList<string> roles = await _userManager.GetRolesAsync(user); // helper method from IdentityUser
+                string token = _jwtTokenService.GenerateToken(user, roles);
 
                 UserDto userDto = new()
                 {

@@ -2,12 +2,14 @@
 using Bangla.Services.CouponAPI.Data;
 using Bangla.Services.CouponAPI.Models;
 using Bangla.Services.CouponAPI.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bangla.Services.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
+    [Authorize]
     public class CouponsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -83,6 +85,7 @@ namespace Bangla.Services.CouponAPI.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDto Post([FromBody] CouponDto coupon)
         {
             try
@@ -103,6 +106,7 @@ namespace Bangla.Services.CouponAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDto Update([FromBody] CouponDto coupon)
         {
             try
@@ -124,6 +128,7 @@ namespace Bangla.Services.CouponAPI.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDto Delete(int id)
         {
             try
