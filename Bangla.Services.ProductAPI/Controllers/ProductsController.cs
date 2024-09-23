@@ -9,7 +9,6 @@ namespace Bangla.Services.ProductAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
