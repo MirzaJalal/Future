@@ -1,4 +1,6 @@
-﻿namespace Future.Bangla.Web.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Future.Bangla.Web.Models
 {
     public class ProductDto
     {
@@ -8,5 +10,8 @@
         public string Description { get; set; }
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; }
+
+        [Range(0, 50)]
+        public int Count { get; set; } = 1;
     }
 }
