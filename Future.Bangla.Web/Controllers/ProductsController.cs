@@ -57,7 +57,8 @@ namespace Future.Bangla.Web.Controllers
             return View(product);
         }
 
-        public async Task<IActionResult> ProductDelete(int productId)
+
+		public async Task<IActionResult> ProductDelete(int productId)
         {
 			ResponseDto? response = await _productService.GetProductByIdAsync(productId);
 
@@ -91,6 +92,42 @@ namespace Future.Bangla.Web.Controllers
 
             return View(product);
         }
-    }
+
+
+		public async Task<IActionResult> ProductEdit(int productId)
+		{
+			ResponseDto? response = await _productService.GetProductByIdAsync(productId);
+
+			if (response != null && response.IsSuccess)
+			{
+				ProductDto? product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
+				return View(product);
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+
+			return NotFound();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> ProductEdit(ProductDto product)
+		{
+			ResponseDto? response = await _productService.UpdateProductsAsync(product);
+
+			if (response != null && response.IsSuccess)
+			{
+				TempData["success"] = "Product updated Successfully!";
+				return RedirectToAction(nameof(ProductIndex));
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+
+			return View(product);
+		}
+	}
 
 }
