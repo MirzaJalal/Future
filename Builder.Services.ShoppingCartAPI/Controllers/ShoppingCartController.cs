@@ -27,6 +27,36 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
 
         }
 
+        [HttpGet("GetCart/{userId}")]
+        public async Task<ResponseDto> GetCart(string userId)
+        {
+            try
+            {
+                ShoppingCartDto cartDto = new()
+                {
+                    CartHeader = _mapper.Map<ShoppingCartHeaderDto>(_context.cartHeaders.First(u => u.UserId == userId))
+                };
+
+                var shoppingCartDetailsDto = _mapper.Map<IEnumerable<ShoppingCartDetailsDto>>(_context.cartDetails
+                    .Where(u => u.CartHeaderId == cartDto.CartHeader.CartHeaderId)).ToList();
+
+                cartDto.CartDetails = shoppingCartDetailsDto;
+
+                foreach(var item in cartDto.CartDetails)
+                {
+                    cartDto.CartHeader.CartTotal += (item.Count * item.Product.Price);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                _responseDto.Message = ex.Message;
+                _responseDto.IsSuccess = false;
+            }
+
+            return _responseDto;
+        }
+
         [HttpPost("upsert")]
         public async Task<ResponseDto> UpsertCart([FromBody] ShoppingCartDto cartDto)
         {
