@@ -88,6 +88,37 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
             }
              return _responseDto;
         }
+        [HttpPost("RemoveCart")]
+        public async Task<ResponseDto> RemoveCartDetails([FromBody] int cartDetailsId)
+        {
+            try
+            {
+                var cartDetailsResult = _context.cartDetails.First(d => d.CartDetailsId == cartDetailsId);
+
+                int totalCartItem = _context.cartDetails.Where(c => c.CartHeaderId == cartDetailsResult.CartHeaderId).Count();
+            
+
+                _context.cartDetails.Remove(cartDetailsResult);
+
+                if(totalCartItem == 1)
+                {
+                    var cartHeaderToRemove = await _context.cartHeaders
+                        .FirstOrDefaultAsync(h => h.CartHeaderId == cartDetailsResult.CartHeaderId);
+                    _context.cartHeaders.Remove(cartHeaderToRemove);
+                }
+                _responseDto.IsSuccess = true;
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                _responseDto.Message =  ex.Message.ToString();
+                _responseDto.IsSuccess = false;
+            }
+
+            return _responseDto;
+        }
+
     }
 }
 
