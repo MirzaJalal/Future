@@ -2,6 +2,7 @@
 using Bangla.Services.ShoppingCartAPI.Data;
 using Builder.Services.ShoppingCartAPI.Models;
 using Builder.Services.ShoppingCartAPI.Models.Dto;
+using Builder.Services.ShoppingCartAPI.Service.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,17 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IProductService _productService;
         private readonly IMapper _mapper;
         private readonly ResponseDto _responseDto;
         private readonly ILogger<ShoppingCartController> _logger;
         public ShoppingCartController(ApplicationDbContext context,
+            IProductService productService,
             IMapper mapper,
             ILogger<ShoppingCartController> logger)
         {
             _context = context;
+            _productService = productService;
             _mapper = mapper;
             _responseDto = new ResponseDto();
             _logger = logger;
@@ -41,11 +45,17 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
                     .Where(u => u.CartHeaderId == cartDto.CartHeader.CartHeaderId)).ToList();
 
                 cartDto.CartDetails = shoppingCartDetailsDto;
+                
+                // received the list of products from the product service using http request 
+                var productListDto = await _productService.GetProducts();
 
                 foreach(var item in cartDto.CartDetails)
                 {
+                    item.Product = productListDto.FirstOrDefault(p => p.ProductId == item.ProductId);
                     cartDto.CartHeader.CartTotal += (item.Count * item.Product.Price);
                 }
+
+                _responseDto.Result = cartDto;
             }
             catch (Exception ex)
             {
@@ -118,6 +128,7 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
             }
              return _responseDto;
         }
+
         [HttpPost("RemoveCart")]
         public async Task<ResponseDto> RemoveCartDetails([FromBody] int cartDetailsId)
         {

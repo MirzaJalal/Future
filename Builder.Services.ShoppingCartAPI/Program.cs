@@ -2,6 +2,8 @@ using AutoMapper;
 using Bangla.Services.ShoppingCartAPI;
 using Bangla.Services.ShoppingCartAPI.Data;
 using Bangla.Services.ShoppingCartAPI.Extensions;
+using Builder.Services.ShoppingCartAPI.Service.IService;
+using Builder.Services.ShoppingCartAPI.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -18,6 +20,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); // available throughout the lifecycle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddHttpClient("Product", u => 
+                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
