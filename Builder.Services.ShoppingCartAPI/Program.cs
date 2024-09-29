@@ -21,8 +21,12 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); // available throughout the lifecycle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddHttpClient("Product", u => 
                 u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]));
+
+builder.Services.AddHttpClient("Coupon", u =>
+                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
 
 
 builder.Services.AddControllers();

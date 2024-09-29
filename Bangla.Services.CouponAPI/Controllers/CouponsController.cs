@@ -9,7 +9,7 @@ namespace Bangla.Services.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CouponsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -60,7 +60,7 @@ namespace Bangla.Services.CouponAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetByCode/{code}")]
+        [Route("GetByCode/{couponCode}")]
         public ResponseDto GetByCode(string couponCode)
         {
             try

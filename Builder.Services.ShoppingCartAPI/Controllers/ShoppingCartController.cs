@@ -15,16 +15,19 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProductService _productService;
+        private readonly ICouponService _couponService;
         private readonly IMapper _mapper;
         private readonly ResponseDto _responseDto;
         private readonly ILogger<ShoppingCartController> _logger;
         public ShoppingCartController(ApplicationDbContext context,
             IProductService productService,
+            ICouponService couponService,
             IMapper mapper,
             ILogger<ShoppingCartController> logger)
         {
             _context = context;
             _productService = productService;
+            _couponService = couponService;
             _mapper = mapper;
             _responseDto = new ResponseDto();
             _logger = logger;
@@ -55,6 +58,20 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
                     cartDto.CartHeader.CartTotal += (item.Count * item.Product.Price);
                 }
 
+                // applying coupon to the cart total
+
+                if (!string.IsNullOrEmpty(cartDto.CartHeader.CouponCode))
+                {
+                    var couponDto = await _couponService.GetCoupon(cartDto.CartHeader.CouponCode);
+                    
+                    if(couponDto != null && cartDto.CartHeader.CartTotal > couponDto.MinAmount)
+                    {
+                        cartDto.CartHeader.CartTotal -= couponDto.DiscountAmount;
+                        cartDto.CartHeader.Discount = couponDto.DiscountAmount;
+                    }
+
+                }
+
                 _responseDto.Result = cartDto;
             }
             catch (Exception ex)
@@ -78,6 +95,10 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
                 if(cart != null)
                 {
                     cart.CouponCode = shoppingCartDto.CartHeader.CouponCode;
+
+                    //var couponDto = await _couponService.GetCoupon(shoppingCartDto.CartHeader.CouponCode);
+                    //cart.Discount = couponDto.DiscountAmount;
+
                      _context.cartHeaders.Update(cart);
                     await _context.SaveChangesAsync();
                     _responseDto.Result= true;
