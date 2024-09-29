@@ -67,6 +67,60 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
             return _responseDto;
         }
 
+        [HttpPost("UseCoupon")]
+        public async Task<object> ApplyCoupon([FromBody] ShoppingCartDto shoppingCartDto)
+        {
+            try
+            {
+
+               var cart = await _context.cartHeaders.FirstOrDefaultAsync(c => c.UserId == shoppingCartDto.CartHeader.UserId);
+            
+                if(cart != null)
+                {
+                    cart.CouponCode = shoppingCartDto.CartHeader.CouponCode;
+                     _context.cartHeaders.Update(cart);
+                    await _context.SaveChangesAsync();
+                    _responseDto.Result= true;
+                }
+                else
+                {
+                    _responseDto.Message = "Cart not found";
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message); 
+                _responseDto.Message = ex.ToString();
+            }
+
+            return _responseDto;
+        }
+
+        [HttpPost("RemoveCoupon")]
+        public async Task<object> RemoveCoupon([FromBody] ShoppingCartDto shoppingCartDto)
+        {
+            try
+            {
+
+                var cart = await _context.cartHeaders.FirstOrDefaultAsync(c => c.UserId == shoppingCartDto.CartHeader.UserId);
+
+                if (cart != null)
+                {
+                    cart.CouponCode = "";
+                    _context.cartHeaders.Update(cart);
+                    await _context.SaveChangesAsync();
+                    _responseDto.Result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                _responseDto.Message = ex.ToString();
+            }
+
+            return _responseDto;
+        }
+
         [HttpPost("upsert")]
         public async Task<ResponseDto> UpsertCart([FromBody] ShoppingCartDto cartDto)
         {
