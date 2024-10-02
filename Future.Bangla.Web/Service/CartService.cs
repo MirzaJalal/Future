@@ -29,7 +29,7 @@ namespace Future.Bangla.Web.Service
         {
             return await _baseService.SendAsync(new RequestDto()
             {
-                ApiType = ApiType.POST,
+                ApiType = ApiType.GET,
                 Url = SD.ShoppingCartAPIBase + $"/api/cart/GetCart/{userId}",
             });
         }
