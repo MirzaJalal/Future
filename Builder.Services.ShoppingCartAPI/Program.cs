@@ -7,7 +7,7 @@ using Builder.Services.ShoppingCartAPI.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Text;
+using Builder.Services.ShoppingCartAPI.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +21,16 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); // available throughout the lifecycle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<TokenPropagationHandler>();
 builder.Services.AddScoped<ICouponService, CouponService>();
-builder.Services.AddHttpClient("Product", u => 
-                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]));
+builder.Services.AddHttpClient("Product", u =>
+                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]))
+    .AddHttpMessageHandler<TokenPropagationHandler>();
 
 builder.Services.AddHttpClient("Coupon", u =>
-                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]));
+                u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:CouponAPI"]))
+    .AddHttpMessageHandler<TokenPropagationHandler>(); ;
 
 
 builder.Services.AddControllers();

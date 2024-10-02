@@ -9,7 +9,7 @@ namespace Bangla.Services.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class CouponsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
