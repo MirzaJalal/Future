@@ -6,7 +6,7 @@ namespace Future.Bangla.Web.Service.IService
     {
         Task<ResponseDto?> GetCartAsync(string userId);
         Task<ResponseDto?> UpsertCartAsync(ShoppingCartDto shoppingCartDto);
-        Task<ResponseDto?> RemoveFromCartAstnc(int cartDetailsId);
+        Task<ResponseDto?> RemoveFromCartAsync(int cartDetailsId);
         Task<ResponseDto?> ApplyCouponAsync(ShoppingCartDto shoppingCartDto);
     }
 }

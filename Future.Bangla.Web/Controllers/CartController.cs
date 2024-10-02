@@ -21,6 +21,58 @@ namespace Future.Bangla.Web.Controllers
             return View(await LoadCartDtoByLoggedInUser());
         }
 
+        public async Task<IActionResult> Remove(int CartDetailsId)
+        {
+            string? userId = User.Claims
+                .Where(u => u.Type == JwtRegisteredClaimNames.Sub)?
+                .FirstOrDefault()?.Value;
+
+            ResponseDto? response = await _cartService.RemoveFromCartAsync(CartDetailsId);
+
+            if (response == null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["success"] = "Cart Updated!";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyCoupon(ShoppingCartDto shoppingCartDto)
+        {
+            ResponseDto? response = await _cartService.ApplyCouponAsync(shoppingCartDto);
+
+            if (response == null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["success"] = "Cart Updated!";
+                return RedirectToAction(nameof(CartIndex));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveCoupon(ShoppingCartDto shoppingCartDto)
+        {
+            shoppingCartDto.CartHeader.CouponCode = "";
+            ResponseDto? response = await _cartService.ApplyCouponAsync(shoppingCartDto);
+
+            if (response == null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["success"] = "Cart Updated!";
+                return RedirectToAction(nameof(CartIndex));
+            }
+        }
+
         private async Task<ShoppingCartDto> LoadCartDtoByLoggedInUser()
         {
             string? userId = User.Claims

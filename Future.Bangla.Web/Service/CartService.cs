@@ -34,7 +34,7 @@ namespace Future.Bangla.Web.Service
             });
         }
 
-        public async Task<ResponseDto?> RemoveFromCartAstnc(int cartDetailsId)
+        public async Task<ResponseDto?> RemoveFromCartAsync(int cartDetailsId)
         {
             return await _baseService.SendAsync(new RequestDto()
             {
