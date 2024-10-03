@@ -58,8 +58,17 @@ namespace Future.Bangla.Web.Controllers
         
         [HttpPost]
         public async Task<IActionResult> EmailCart(ShoppingCartDto shoppingCartDto)
+
         {
-            ResponseDto? response = await _cartService.EmailCartAsync(shoppingCartDto);
+            ShoppingCartDto shoppingCart = await LoadCartDtoByLoggedInUser();
+
+            string? email = User.Claims
+                                .Where(u => u.Type == JwtRegisteredClaimNames.Email)?
+                                .FirstOrDefault()?.Value;
+
+            shoppingCart.CartHeader.Email = email;
+
+            ResponseDto? response = await _cartService.EmailCartAsync(shoppingCart);
 
             if (response == null)
             {
