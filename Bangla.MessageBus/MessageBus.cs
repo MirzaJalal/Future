@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Net;
 using System.Text;
 
 
@@ -12,7 +13,7 @@ namespace Bangla.MessageBus
 
         public MessageBus(IConfiguration configuration)
         {
-            _connectionString = configuration["AzureServiceBus:ConnectionString"];
+            _connectionString = "Endpoint=sb://futurebanglashop.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=m5Q6zYyHg5lm3txykA0JS6qEOyP7yJlrN+ASbCyoOiA=";
         }
 
         // Sending Message to Service Bus

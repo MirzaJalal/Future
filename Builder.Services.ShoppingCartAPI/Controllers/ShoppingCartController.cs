@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bangla.MessageBus;
 using Bangla.Services.ShoppingCartAPI.Data;
 using Builder.Services.ShoppingCartAPI.Models;
 using Builder.Services.ShoppingCartAPI.Models.Dto;
@@ -18,11 +19,15 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
         private readonly ICouponService _couponService;
         private readonly IMapper _mapper;
         private readonly ResponseDto _responseDto;
+        private readonly IMessageBus _messageBus;
+        IConfiguration _configuration;
         private readonly ILogger<ShoppingCartController> _logger;
         public ShoppingCartController(ApplicationDbContext context,
             IProductService productService,
             ICouponService couponService,
             IMapper mapper,
+            IMessageBus messageBus,
+            IConfiguration configuration,
             ILogger<ShoppingCartController> logger)
         {
             _context = context;
@@ -30,6 +35,8 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
             _couponService = couponService;
             _mapper = mapper;
             _responseDto = new ResponseDto();
+            _messageBus = messageBus;
+            _configuration = configuration;
             _logger = logger;
 
         }
@@ -230,6 +237,23 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
                 _logger.LogError(ex.Message);
                 _responseDto.Message =  ex.Message.ToString();
                 _responseDto.IsSuccess = false;
+            }
+
+            return _responseDto;
+        }
+
+       [HttpPost("emailCartRequest")]
+        public async Task<object> EmailCartRequest([FromBody] ShoppingCartDto cartDto)
+        {
+            try
+            {
+                await _messageBus.SendMessageAsync(cartDto, _configuration["AzureServiceBus:QueueName"]);
+                _responseDto.Result = true;
+            }
+            catch (Exception ex)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.ToString();
             }
 
             return _responseDto;
