@@ -25,6 +25,16 @@ namespace Future.Bangla.Web.Service
             });
         }
 
+        public async Task<ResponseDto?> EmailCartAsync(ShoppingCartDto shoppingCartDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = ApiType.POST,
+                Data = shoppingCartDto,
+                Url = SD.ShoppingCartAPIBase + "/api/cart/emailCartRequest",
+            });
+        }
+
         public async Task<ResponseDto?> GetCartAsync(string userId)
         {
             return await _baseService.SendAsync(new RequestDto()

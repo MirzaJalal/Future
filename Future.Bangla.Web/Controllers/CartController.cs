@@ -55,6 +55,22 @@ namespace Future.Bangla.Web.Controllers
                 return RedirectToAction(nameof(CartIndex));
             }
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> EmailCart(ShoppingCartDto shoppingCartDto)
+        {
+            ResponseDto? response = await _cartService.EmailCartAsync(shoppingCartDto);
+
+            if (response == null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["success"] = "An email will be sent to you shortly!";
+                return RedirectToAction(nameof(CartIndex));
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> RemoveCoupon(ShoppingCartDto shoppingCartDto)
