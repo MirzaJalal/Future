@@ -81,13 +81,13 @@ namespace Future.Bangla.Web.Controllers
 
             ResponseDto? response = await _cartService.GetCartAsync(userId);
 
-            if (response == null)
+            if (response.IsSuccess is not true)
             {
                 return new ShoppingCartDto();
             }
             else
             {
-                ShoppingCartDto cartDto = JsonConvert
+                ShoppingCartDto? cartDto = JsonConvert
                     .DeserializeObject<ShoppingCartDto>(Convert.ToString(response.Result));
                
                 return cartDto;
