@@ -14,13 +14,15 @@ namespace Bangla.Services.EmailAPI.Messaging
 
         // Constructor where the ServiceBusProcessor is injected and initialized
         public AzureServiceBusReceiver(IConfiguration configuration,
-                                       ILogger<AzureServiceBusReceiver> logger,
-                                       ServiceBusProcessor emailBusProcessor)
+                                       ILogger<AzureServiceBusReceiver> logger)
         {
             _connectionString = configuration["AzureServiceBus:ConnectionString"];
             _queueName = configuration["AzureServiceBus:EmailShoppingCart_QueueName"];
+
+            var client = new ServiceBusClient(_connectionString);
+            _emailBusProcessor = client.CreateProcessor(_queueName);
+
             _logger = logger;
-            _emailBusProcessor = emailBusProcessor;
         }
 
         // Method to start processing messages
