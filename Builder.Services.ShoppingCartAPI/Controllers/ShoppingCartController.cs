@@ -247,7 +247,7 @@ namespace Builder.Services.ShoppingCartAPI.Controllers
         {
             try
             {
-                await _messageBus.SendMessageAsync(cartDto, _configuration["AzureServiceBus:QueueName"]);
+                await _messageBus.SendMessageAsync(cartDto, _configuration["AzureServiceBus:EmailShoppingCart_QueueName"]);
                 _responseDto.Result = true;
             }
             catch (Exception ex)
