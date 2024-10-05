@@ -10,5 +10,6 @@ namespace Bangla.MessageBus
     {
         // topic and queue name must be identical in azure service bus
         Task SendMessageAsync(object message, string topic_queue_name);
+
     }
 }
