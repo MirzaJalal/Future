@@ -1,4 +1,6 @@
 using Bangla.Services.EmailAPI.Data;
+using Bangla.Services.EmailAPI.Extension;
+using Bangla.Services.EmailAPI.Messaging;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabaseConnection"));
 });
+
+builder.Services.AddSingleton<IAzureServiceBusReceiver, AzureServiceBusReceiver>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -30,7 +34,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 ApplyMigration();
-
+// added in the pipeline
+app.UseAzureServiceBusReceiver();
 app.Run();
 
 void ApplyMigration()
