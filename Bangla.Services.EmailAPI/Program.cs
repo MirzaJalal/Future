@@ -1,6 +1,7 @@
 using Bangla.Services.EmailAPI.Data;
 using Bangla.Services.EmailAPI.Extension;
 using Bangla.Services.EmailAPI.Messaging;
+using Bangla.Services.EmailAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabaseConnection"));
 });
+
+var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabaseConnection"));
+builder.Services.AddSingleton(new EmailService(optionBuilder.Options));
 
 builder.Services.AddSingleton<IAzureServiceBusReceiver, AzureServiceBusReceiver>();
 

@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Bangla.Services.EmailAPI.Models.Dto;
+using Bangla.Services.EmailAPI.Services;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -11,10 +12,12 @@ namespace Bangla.Services.EmailAPI.Messaging
         private readonly string _queueName;
         private readonly ILogger<AzureServiceBusReceiver> _logger;
         private readonly ServiceBusProcessor _emailBusProcessor;
+        private readonly EmailService _emailService;
 
         // Constructor where the ServiceBusProcessor is injected and initialized
         public AzureServiceBusReceiver(IConfiguration configuration,
-                                       ILogger<AzureServiceBusReceiver> logger)
+                                       ILogger<AzureServiceBusReceiver> logger,
+                                       EmailService emailService)
         {
             _connectionString = configuration["AzureServiceBus:ConnectionString"];
             _queueName = configuration["AzureServiceBus:EmailShoppingCart_QueueName"];
@@ -22,6 +25,7 @@ namespace Bangla.Services.EmailAPI.Messaging
             var client = new ServiceBusClient(_connectionString);
             _emailBusProcessor = client.CreateProcessor(_queueName);
 
+            _emailService = emailService;
             _logger = logger;
         }
 
@@ -56,6 +60,8 @@ namespace Bangla.Services.EmailAPI.Messaging
 
             try
             {
+                // logging the email in the db
+                await _emailService.EmailCartAndLog(shoppingCartDto);
                 // Complete the message, removing it from the queue
                 await args.CompleteMessageAsync(args.Message);
             }
