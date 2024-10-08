@@ -1,4 +1,4 @@
-﻿namespace Builder.Services.ShoppingCartAPI.Models.Dto
+﻿namespace Bangla.Services.EmailAPI.Models.Dto
 {
     public class ShoppingCartHeaderDto
     {

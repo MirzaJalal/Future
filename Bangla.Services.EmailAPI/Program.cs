@@ -1,9 +1,7 @@
-using Bangla.MessageBus;
-using Bangla.Services.AuthenticationAPI.Data;
-using Bangla.Services.AuthenticationAPI.Models;
-using Bangla.Services.AuthenticationAPI.Service;
-using Bangla.Services.AuthenticationAPI.Service.IService;
-using Microsoft.AspNetCore.Identity;
+using Bangla.Services.EmailAPI.Data;
+using Bangla.Services.EmailAPI.Extension;
+using Bangla.Services.EmailAPI.Messaging;
+using Bangla.Services.EmailAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,22 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabaseConnection"));
 });
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDatabaseConnection"));
+builder.Services.AddSingleton(new EmailService(optionBuilder.Options));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
-                                                           .AddDefaultTokenProviders();
+builder.Services.AddSingleton<IAzureServiceBusReceiver, AzureServiceBusReceiver>();
+
 builder.Services.AddControllers();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-
-builder.Services.AddScoped<IMessageBus, MessageBus>();
-
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,13 +33,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
 ApplyMigration();
+// added in the pipeline
+app.UseAzureServiceBusReceiver();
 app.Run();
 
 void ApplyMigration()

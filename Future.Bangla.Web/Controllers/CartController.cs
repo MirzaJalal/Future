@@ -55,6 +55,31 @@ namespace Future.Bangla.Web.Controllers
                 return RedirectToAction(nameof(CartIndex));
             }
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> EmailCart(ShoppingCartDto shoppingCartDto)
+
+        {
+            ShoppingCartDto shoppingCart = await LoadCartDtoByLoggedInUser();
+
+            string? email = User.Claims
+                                .Where(u => u.Type == JwtRegisteredClaimNames.Email)?
+                                .FirstOrDefault()?.Value;
+
+            shoppingCart.CartHeader.Email = email;
+
+            ResponseDto? response = await _cartService.EmailCartAsync(shoppingCart);
+
+            if (response == null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["success"] = "An email will be sent to you shortly!";
+                return RedirectToAction(nameof(CartIndex));
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> RemoveCoupon(ShoppingCartDto shoppingCartDto)
