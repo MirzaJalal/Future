@@ -5,5 +5,6 @@ namespace Bangla.Services.EmailAPI.Services
     public interface IEmailService
     {
         Task EmailCartAndLog(ShoppingCartDto shoppingCartDto);
+        Task RegistrationUserEmailAndLog(string email);
     }
 }

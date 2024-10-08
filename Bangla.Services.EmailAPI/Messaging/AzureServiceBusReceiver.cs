@@ -10,9 +10,12 @@ namespace Bangla.Services.EmailAPI.Messaging
     {
         private readonly string _connectionString;
         private readonly string _queueName;
+        private readonly string _registrationUserQueue;
         private readonly ILogger<AzureServiceBusReceiver> _logger;
-        private readonly ServiceBusProcessor _emailBusProcessor;
         private readonly EmailService _emailService;
+
+        private readonly ServiceBusProcessor _emailBusProcessor;
+        private readonly ServiceBusProcessor _registrationUserBusProcessor;
 
         // Constructor where the ServiceBusProcessor is injected and initialized
         public AzureServiceBusReceiver(IConfiguration configuration,
@@ -21,9 +24,11 @@ namespace Bangla.Services.EmailAPI.Messaging
         {
             _connectionString = configuration["AzureServiceBus:ConnectionString"];
             _queueName = configuration["AzureServiceBus:EmailShoppingCart_QueueName"];
+            _registrationUserQueue = configuration["AzureServiceBus:RegistrationUserQueueName"];
 
             var client = new ServiceBusClient(_connectionString);
             _emailBusProcessor = client.CreateProcessor(_queueName);
+            _registrationUserBusProcessor = client.CreateProcessor(_registrationUserQueue);
 
             _emailService = emailService;
             _logger = logger;
@@ -35,9 +40,16 @@ namespace Bangla.Services.EmailAPI.Messaging
             // Subscribe to message and error handlers here
             _emailBusProcessor.ProcessMessageAsync += MessageHandler;
             _emailBusProcessor.ProcessErrorAsync += ErrorHandler;
-
-            // No need to create the processor again; just start processing messages
+            // No need to create the processor; just start processing messages
             await _emailBusProcessor.StartProcessingAsync();
+
+
+            // Subscribe to Registration user bus message and error handlers
+            _registrationUserBusProcessor.ProcessMessageAsync += OnUserRegistrationMessageHandler;
+            _registrationUserBusProcessor.ProcessErrorAsync += ErrorHandler;
+            // No need to create the processor again; just start processing messages
+            await _registrationUserBusProcessor.StartProcessingAsync();
+
             _logger.LogInformation("Started processing messages...");
         }
 
@@ -46,6 +58,9 @@ namespace Bangla.Services.EmailAPI.Messaging
         {
             await _emailBusProcessor.StopProcessingAsync();
             await _emailBusProcessor.DisposeAsync();
+
+            await _registrationUserBusProcessor.StopProcessingAsync();
+            await _registrationUserBusProcessor.DisposeAsync();
         }
 
         #region Handlers for receving message
@@ -79,6 +94,33 @@ namespace Bangla.Services.EmailAPI.Messaging
         {
             _logger.LogError($"Message handler encountered an error: {args.Exception}");
             return Task.CompletedTask;
+        }
+        #endregion 
+
+        #region OnUserRegistration MessageHandler
+        private async Task OnUserRegistrationMessageHandler(ProcessMessageEventArgs args)
+        {
+            var message = args.Message;
+            string body = Encoding.UTF8.GetString(message.Body);
+
+            string registrationEmail = JsonConvert.DeserializeObject<string>(body);
+
+            _logger.LogInformation($"Received: {registrationEmail}");
+
+            try
+            {
+                // logging the email in the db
+                await _emailService.RegistrationUserEmailAndLog(registrationEmail);
+                // Complete the message, removing it from the queue
+                await args.CompleteMessageAsync(args.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+
+            // Complete the message after processing it
+            await args.CompleteMessageAsync(args.Message);
         }
         #endregion
 

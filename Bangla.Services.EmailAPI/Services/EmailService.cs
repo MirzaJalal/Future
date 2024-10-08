@@ -36,6 +36,15 @@ namespace Bangla.Services.EmailAPI.Services
             await LogAndEmail(message.ToString(), shoppingCartDto.CartHeader.Email);
         }
 
+        public async Task RegistrationUserEmailAndLog(string email)
+        {
+            StringBuilder message = new StringBuilder();
+
+            message.AppendLine("User registration Successful. <br/> Email: " + email);
+
+            await LogAndEmail(message.ToString(), email);
+        }
+
         private async Task<bool> LogAndEmail(string message, string email)
         {
             try
