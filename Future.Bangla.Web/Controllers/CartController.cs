@@ -21,6 +21,13 @@ namespace Future.Bangla.Web.Controllers
             return View(await LoadCartDtoByLoggedInUser());
         }
 
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+
+            return View(await LoadCartDtoByLoggedInUser());
+        }
+
         public async Task<IActionResult> Remove(int CartDetailsId)
         {
             string? userId = User.Claims
