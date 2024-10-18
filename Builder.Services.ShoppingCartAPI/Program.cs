@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Builder.Services.ShoppingCartAPI.Utility;
+using Bangla.MessageBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<TokenPropagationHandler>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IMessageBus, MessageBus>();
 builder.Services.AddHttpClient("Product", u =>
                 u.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]))
     .AddHttpMessageHandler<TokenPropagationHandler>();

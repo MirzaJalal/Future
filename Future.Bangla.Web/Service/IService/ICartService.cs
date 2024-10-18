@@ -8,5 +8,6 @@ namespace Future.Bangla.Web.Service.IService
         Task<ResponseDto?> UpsertCartAsync(ShoppingCartDto shoppingCartDto);
         Task<ResponseDto?> RemoveFromCartAsync(int cartDetailsId);
         Task<ResponseDto?> ApplyCouponAsync(ShoppingCartDto shoppingCartDto);
+        Task<ResponseDto?> EmailCartAsync(ShoppingCartDto shoppingCartDto);
     }
 }

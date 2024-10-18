@@ -1,4 +1,5 @@
-﻿using Bangla.Services.AuthenticationAPI.Models.Dto;
+﻿using Bangla.MessageBus;
+using Bangla.Services.AuthenticationAPI.Models.Dto;
 using Bangla.Services.AuthenticationAPI.Service.IService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,17 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
     {
         private readonly IAuthService _authService;
         protected ResponseDto _resposne;
+        private readonly IMessageBus _messageBus;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationAPIController(IAuthService authService)
+        public AuthenticationAPIController(IAuthService authService, 
+            IMessageBus messageBus,
+            IConfiguration configuration)
         {
             _authService = authService;
             _resposne = new();
+            _messageBus = messageBus;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -28,6 +35,9 @@ namespace Bangla.Services.AuthenticationAPI.Controllers
                 _resposne.Message = errorMessage;
                 return BadRequest(_resposne);
             }
+
+            await _messageBus.SendMessageAsync(registrationDto.Email, _configuration["AzureServiceBus:RegistrationUserQueueName"]);
+            
             return Ok(_resposne);
         }
 
