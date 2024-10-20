@@ -11,6 +11,7 @@
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public DateTime OrderTime { get; set; }
+        public string OrderStatus { get; set; }
 
         // Properties for Stripe Payment
         public string? PaymentIntentId { get; set; }
