@@ -5,7 +5,6 @@ using Bangla.Services.OrderAPI.Models.Dtos;
 using Bangla.Services.OrderAPI.Utility;
 using Builder.Services.ShoppingCartAPI.Service.IService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -21,8 +20,8 @@ namespace Bangla.Services.OrderAPI.Controllers
         private IProductService _productService;
         private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(ApplicationDbContext context, 
-            IMapper mapper, 
+        public OrdersController(ApplicationDbContext context,
+            IMapper mapper,
             IProductService productService,
             ILogger<OrdersController> logger)
         {
@@ -32,7 +31,6 @@ namespace Bangla.Services.OrderAPI.Controllers
             _productService = productService;
             _logger = logger;
         }
-
         [Authorize]
         [HttpPost("CreateOrder")]
         public async Task<ResponseDto> CreateOrder([FromBody] ShoppingCartDto shoppingCartDto)
@@ -42,8 +40,8 @@ namespace Bangla.Services.OrderAPI.Controllers
                 var orderHeaderDto = _mapper.Map<OrderHeaderDto>(shoppingCartDto.CartHeader);
 
                 orderHeaderDto.OrderTime = DateTime.Now;
-                orderHeaderDto.OrderStatus = OrderUtility.Status.Pending.ToString();
-                orderHeaderDto.OrderDetails = _mapper.Map<List<OrderDetails>>(shoppingCartDto.CartDetails);
+                orderHeaderDto.Status = OrderUtility.Status.Pending.ToString();
+                orderHeaderDto.OrderDetails = _mapper.Map<List<OrderDetailsDto>>(shoppingCartDto.CartDetails);
 
                 EntityEntry<OrderHeader> orderHeader = _context.OrderHeaders.Add(_mapper.Map<OrderHeader>(orderHeaderDto));
                 await _context.SaveChangesAsync();
