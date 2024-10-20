@@ -10,9 +10,11 @@ namespace Future.Bangla.Web.Controllers
     public class CartController : Controller
     {
         private readonly ICartService _cartService;
-        public CartController(ICartService cartService)
+        private readonly IOrderService _orderService;
+        public CartController(ICartService cartService, IOrderService orderService)
         {
             _cartService = cartService;
+            _orderService = orderService;
         }
         [Authorize]
         public async Task<IActionResult> CartIndex()
@@ -21,6 +23,34 @@ namespace Future.Bangla.Web.Controllers
             return View(await LoadCartDtoByLoggedInUser());
         }
 
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+
+            return View(await LoadCartDtoByLoggedInUser());
+        }
+
+        [HttpPost]
+        [ActionName("Checkout")]
+        public async Task<IActionResult> Checkout(ShoppingCartDto shoppingCartDto)
+        {
+            ShoppingCartDto updatedCart = await LoadCartDtoByLoggedInUser();
+
+            updatedCart.CartHeader.Phone = shoppingCartDto.CartHeader.Phone;
+            updatedCart.CartHeader.Email = shoppingCartDto.CartHeader.Email;
+            updatedCart.CartHeader.Name = shoppingCartDto.CartHeader.Name;
+
+            ResponseDto response = await _orderService.CreateOrderAsync(updatedCart);
+
+            OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
+
+            if(response != null && response.IsSuccess)
+            {
+                // Stripe Payment
+            }
+
+            return View();
+        }
         public async Task<IActionResult> Remove(int CartDetailsId)
         {
             string? userId = User.Claims
