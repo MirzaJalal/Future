@@ -4,6 +4,7 @@ using Bangla.Services.OrderAPI.Models;
 using Bangla.Services.OrderAPI.Models.Dtos;
 using Bangla.Services.OrderAPI.Utility;
 using Builder.Services.ShoppingCartAPI.Service.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -32,6 +33,8 @@ namespace Bangla.Services.OrderAPI.Controllers
             _logger = logger;
         }
 
+        [Authorize]
+        [HttpPost("CreateOrder")]
         public async Task<ResponseDto> CreateOrder([FromBody] ShoppingCartDto shoppingCartDto)
         {
             try
