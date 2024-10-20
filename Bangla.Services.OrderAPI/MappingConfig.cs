@@ -18,10 +18,11 @@ namespace Bangla.Services.OrderAPI
                 .ForMember(dest => dest.ProductName, o => o.MapFrom(src => src.Product.Name))
                 .ForMember(dest => dest.Price, o => o.MapFrom(src => src.Product.Price));
 
+                config.CreateMap<OrderDetailsDto, ShoppingCartDetailsDto>();
+
                 config.CreateMap<OrderHeader, OrderHeaderDto>().ReverseMap();
                 config.CreateMap<OrderDetailsDto, OrderDetails>().ReverseMap();
             });
-
             return mappingConfig;
         }
     }

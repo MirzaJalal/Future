@@ -4,7 +4,6 @@ namespace Bangla.Services.OrderAPI.Models
 {
     public class OrderHeader
     {
-        [Key]
         public int OrderHeaderId { get; set; }
         public string? UserId { get; set; }
         public string? CouponCode { get; set; }
