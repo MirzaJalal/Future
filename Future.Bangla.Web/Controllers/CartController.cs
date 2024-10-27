@@ -11,10 +11,12 @@ namespace Future.Bangla.Web.Controllers
     {
         private readonly ICartService _cartService;
         private readonly IOrderService _orderService;
-        public CartController(ICartService cartService, IOrderService orderService)
+        private readonly ILogger<CartController> _logger;
+        public CartController(ICartService cartService, IOrderService orderService, ILogger<CartController> logger)
         {
             _cartService = cartService;
             _orderService = orderService;
+            _logger = logger;
         }
         [Authorize]
         public async Task<IActionResult> CartIndex()
@@ -39,16 +41,35 @@ namespace Future.Bangla.Web.Controllers
             updatedCart.CartHeader.Phone = shoppingCartDto.CartHeader.Phone;
             updatedCart.CartHeader.Email = shoppingCartDto.CartHeader.Email;
             updatedCart.CartHeader.Name = shoppingCartDto.CartHeader.Name;
+            var x =JsonConvert.SerializeObject(updatedCart);
+            _logger.LogInformation($"updated cart deserialized------------ {x}");
 
-            ResponseDto response = await _orderService.CreateOrderAsync(updatedCart);
+            var response = await _orderService.CreateOrderAsync(updatedCart);
 
             OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
 
             if(response != null && response.IsSuccess)
             {
                 // Stripe Payment
-            }
+                var domain = $"{Request.Scheme}://{Request.Host.Value}/";
+                    //Request.Scheme + "://" + Request.Host.Value + "/";
 
+                StripeRequestDto stripeRequestDto = new()
+                {
+                    ApprovedUrl = $"{domain}cart/Confirmation?orderId={orderHeaderDto.OrderHeaderId}",
+                    CancellationUrl = $"{domain}cart/Checkout",
+                    OrderHeaderDto = orderHeaderDto,
+                };
+
+                var stripeResponse = await _orderService.CreateStripeSessionAsync(stripeRequestDto);
+
+                StripeRequestDto stripeRequestResult = JsonConvert.DeserializeObject<StripeRequestDto>
+                                        (Convert.ToString(stripeResponse.Result));
+
+                Response.Headers.Add("Location", stripeRequestResult.StripeSessionUrl);
+
+                return new StatusCodeResult(303); // status code 303 redirect to another page
+            }
             return View();
         }
 

@@ -21,5 +21,15 @@ namespace Future.Bangla.Web.Service
                 Url = SD.OrderAPIBase + "/api/v1/orders/CreateOrder",
             });
         }
+
+        public async Task<ResponseDto?> CreateStripeSessionAsync(StripeRequestDto stripeRequestDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = ApiType.POST,
+                Data = stripeRequestDto,
+                Url = SD.OrderAPIBase + "/api/v1/orders/CreateStripeCheckoutSession",
+            });
+        }
     }
 }
