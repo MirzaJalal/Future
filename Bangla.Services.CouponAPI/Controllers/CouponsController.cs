@@ -94,6 +94,17 @@ namespace Bangla.Services.CouponAPI.Controllers
                 _db.Coupons.Add(couponObj);
                 _db.SaveChanges();
 
+                var options = new Stripe.CouponCreateOptions
+                {
+                    Id = coupon.CouponCode,
+                    AmountOff = (long)(coupon.DiscountAmount*100),
+                    Name = coupon.CouponCode,
+                    Currency = "usd",
+                };
+
+                var service = new Stripe.CouponService();
+                service.Create(options);
+
                 _response.Result = _mapper.Map<CouponDto>(couponObj); ;
             }
             catch (Exception ex)
@@ -136,6 +147,9 @@ namespace Bangla.Services.CouponAPI.Controllers
                 var coupon = _db.Coupons.FirstOrDefault(c => c.CouponId == id);
                 _db.Coupons.Remove(coupon);
                 _db.SaveChanges();
+
+                var service = new Stripe.CouponService();
+                service.Delete(coupon.CouponCode);
 
                 _response.IsSuccess = true;
             }
