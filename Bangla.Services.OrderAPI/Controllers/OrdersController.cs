@@ -69,26 +69,46 @@ namespace Bangla.Services.OrderAPI.Controllers
         {
             try
             {
-                var domain = "http://localhost:4242";
                 var options = new SessionCreateOptions
                 {
-                    LineItems = new List<SessionLineItemOptions>
-                    {
-                      new SessionLineItemOptions
-                      {
-                        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                        Price = "",
-                        Quantity = 1,
-                      },
-                    },
-                    Mode = "payment",
-                    SuccessUrl = domain + "/success.html",
-                    CancelUrl = domain + "/cancel.html",
-                };
-                var service = new SessionService();
-                Session session = service.Create(options);
 
-                Response.Headers.Add("Location", session.Url);
+                    Mode = "payment",
+                    SuccessUrl = stripeRequestDto.ApprovedUrl,
+                    CancelUrl = stripeRequestDto.CancellationUrl,
+                    LineItems = new List<SessionLineItemOptions>()
+                };
+
+                // As we have list of products in the order
+                foreach(var item in stripeRequestDto.OrderHeaderDto.OrderDetails)
+                {
+                    var lineItemOptions = new SessionLineItemOptions
+                    {
+                      PriceData =  new SessionLineItemPriceDataOptions
+                      {
+                        UnitAmount = (long)(item.Price*100), // 20.99 = 2099 
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Name
+                        }
+                      },
+                      Quantity = item.Count
+                    };
+
+                    options.LineItems.Add(lineItemOptions);
+                }
+
+                var service = new SessionService();
+                Session session = service.Create(options); // stripe session
+
+                stripeRequestDto.StripeSessionUrl = session.Url;
+                stripeRequestDto.CancellationUrl = session.CancelUrl;
+
+                var orderHeader = _context.OrderHeaders.First(o => o.OrderHeaderId == stripeRequestDto.OrderHeaderDto.OrderHeaderId);
+                orderHeader.StripePaymentSessionId = session.Id;
+                _context.SaveChanges();
+
+                _responseDto.Result = stripeRequestDto;
             }
             catch(Exception ex)
             {
