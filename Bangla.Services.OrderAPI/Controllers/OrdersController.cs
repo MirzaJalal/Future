@@ -7,6 +7,7 @@ using Builder.Services.ShoppingCartAPI.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
 using Stripe;
 using Stripe.Checkout;
 
@@ -37,8 +38,10 @@ namespace Bangla.Services.OrderAPI.Controllers
         [HttpPost("CreateOrder")]
         public async Task<ResponseDto> CreateOrder([FromBody] ShoppingCartDto shoppingCartDto)
         {
+
             try
             {
+            string incomingJson = JsonConvert.SerializeObject(shoppingCartDto, Formatting.Indented);
                 var orderHeaderDto = _mapper.Map<OrderHeaderDto>(shoppingCartDto.CartHeader);
 
                 orderHeaderDto.OrderTime = DateTime.Now;
@@ -49,7 +52,9 @@ namespace Bangla.Services.OrderAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 orderHeaderDto.OrderHeaderId = orderHeader.Entity.OrderHeaderId;
-                _responseDto.Result = orderHeader.Entity;
+                _responseDto.Result = orderHeaderDto;
+
+                _logger.LogInformation($"Oreder response is ##########{_responseDto}");
 
                 return _responseDto;
             }
