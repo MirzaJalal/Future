@@ -7,6 +7,8 @@ using Builder.Services.ShoppingCartAPI.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Bangla.Services.OrderAPI.Controllers
 {
@@ -59,6 +61,44 @@ namespace Bangla.Services.OrderAPI.Controllers
 
                 return _responseDto;
             }
+        }
+
+        [Authorize]
+        [HttpPost("CreateStripeCheckoutSession")]
+        public async Task<ResponseDto> Create([FromBody] StripeRequestDto stripeRequestDto)
+        {
+            try
+            {
+                var domain = "http://localhost:4242";
+                var options = new SessionCreateOptions
+                {
+                    LineItems = new List<SessionLineItemOptions>
+                    {
+                      new SessionLineItemOptions
+                      {
+                        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                        Price = "",
+                        Quantity = 1,
+                      },
+                    },
+                    Mode = "payment",
+                    SuccessUrl = domain + "/success.html",
+                    CancelUrl = domain + "/cancel.html",
+                };
+                var service = new SessionService();
+                Session session = service.Create(options);
+
+                Response.Headers.Add("Location", session.Url);
+            }
+            catch(Exception ex)
+            {
+                _responseDto.Message = ex.Message; 
+                _responseDto.IsSuccess = false;
+
+                _logger.LogInformation($"Error: {ex.Message}");
+            }
+
+            return _responseDto;
         }
     }
 }
