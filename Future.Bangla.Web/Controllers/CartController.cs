@@ -1,5 +1,6 @@
 ﻿using Future.Bangla.Web.Models;
 using Future.Bangla.Web.Service.IService;
+using Future.Bangla.Web.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -76,6 +77,21 @@ namespace Future.Bangla.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Confirmation(int orderId)
         {
+            ResponseDto? response = await _orderService.ValidateStripeSession(orderId);
+
+            if (response == null)
+            {
+                return View(orderId);
+            }
+            else
+            {
+                var orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
+
+                if(orderHeaderDto.Status == OrderUtility.Status.Approved.ToString())
+                {
+                    return View(orderId);
+                }
+            }
 
             return View(orderId);
         }

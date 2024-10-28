@@ -6,5 +6,6 @@ namespace Future.Bangla.Web.Service.IService
     {
         Task<ResponseDto?> CreateOrderAsync(ShoppingCartDto shoppingCartDto);
         Task<ResponseDto?> CreateStripeSessionAsync(StripeRequestDto stripeRequestDto);
+        Task<ResponseDto?> ValidateStripeSession(int orderHeaderId);
     }
 }
