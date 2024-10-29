@@ -1,7 +1,7 @@
 using AutoMapper;
 using Builder.Services.ShoppingCartAPI.Service.IService;
-using Builder.Services.ShoppingCartAPI.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Builder.Services.ShoppingCartAPI.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Bangla.Services.OrderAPI;
@@ -9,6 +9,7 @@ using Builder.Services.OrderAPI.Utility;
 using Bangla.MessageBus;
 using Bangla.Services.OrderAPI.Extensions;
 using Bangla.Services.OrderAPI.Data;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); // available throughout the lifecycle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, Builder.Services.ShoppingCartAPI.Service.ProductService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<TokenPropagationHandler>();
 builder.Services.AddScoped<IMessageBus, MessageBus>();
@@ -74,6 +75,8 @@ builder.AddAppAuthentication();
 // ### STEP-3: Adding Authorization services ###
 builder.Services.AddAuthorization();
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,6 +85,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

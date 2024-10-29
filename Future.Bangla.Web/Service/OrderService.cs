@@ -21,5 +21,25 @@ namespace Future.Bangla.Web.Service
                 Url = SD.OrderAPIBase + "/api/v1/orders/CreateOrder",
             });
         }
+
+        public async Task<ResponseDto?> CreateStripeSessionAsync(StripeRequestDto stripeRequestDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = ApiType.POST,
+                Data = stripeRequestDto,
+                Url = SD.OrderAPIBase + "/api/v1/orders/CreateStripeCheckoutSession",
+            });
+        }
+
+        public async Task<ResponseDto?> ValidateStripeSession(int orderHeaderId)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = ApiType.POST,
+                Data = orderHeaderId,
+                Url = SD.OrderAPIBase + "/api/v1/orders/ValidateStripeSession",
+            });
+        }
     }
 }
