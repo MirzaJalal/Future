@@ -175,7 +175,7 @@ namespace Bangla.Services.OrderAPI.Controllers
                     };
 
                     // sending rewardsDto to the azure Queue which is a multiple subcriber based bus
-                    await _messageBus.SendMessageAsync(rewardsDto, _configuration["AzureServiceBus:EmailShoppingCart_QueueName"]);
+                    await _messageBus.SendMessageAsync(rewardsDto, _configuration["AzureServiceBus:Ordercreated_TopicName"]);
 
                     _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
                 }
