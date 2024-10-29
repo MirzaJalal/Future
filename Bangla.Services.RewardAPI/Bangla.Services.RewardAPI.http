@@ -1,0 +1,6 @@
+@Bangla.Services.RewardAPI_HostAddress = http://localhost:5236
+
+GET {{Bangla.Services.RewardAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
