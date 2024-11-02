@@ -23,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Builder.Services.ShoppingCa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangla.MessageBus", "Bangla.MessageBus\Bangla.MessageBus.csproj", "{89AAB5C9-9C49-4B52-B04E-EA19CA57A6EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangla.Services.EmailAPI", "Bangla.Services.EmailAPI\Bangla.Services.EmailAPI.csproj", "{0913D2C5-3F7F-4972-AB2F-4435BC995B49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangla.Services.EmailAPI", "Bangla.Services.EmailAPI\Bangla.Services.EmailAPI.csproj", "{0913D2C5-3F7F-4972-AB2F-4435BC995B49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangla.Services.OrderAPI", "Bangla.Services.OrderAPI\Bangla.Services.OrderAPI.csproj", "{32B28878-D17B-46C6-B61E-7FF39B675153}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangla.Services.OrderAPI", "Bangla.Services.OrderAPI\Bangla.Services.OrderAPI.csproj", "{32B28878-D17B-46C6-B61E-7FF39B675153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangla.Services.RewardAPI", "Bangla.Services.RewardAPI\Bangla.Services.RewardAPI.csproj", "{814EFDDE-1CAE-4224-8AFE-444325FA00E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{32B28878-D17B-46C6-B61E-7FF39B675153}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32B28878-D17B-46C6-B61E-7FF39B675153}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32B28878-D17B-46C6-B61E-7FF39B675153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{814EFDDE-1CAE-4224-8AFE-444325FA00E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{814EFDDE-1CAE-4224-8AFE-444325FA00E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{814EFDDE-1CAE-4224-8AFE-444325FA00E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{814EFDDE-1CAE-4224-8AFE-444325FA00E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +84,7 @@ Global
 		{89AAB5C9-9C49-4B52-B04E-EA19CA57A6EE} = {DC30EBD8-394C-4433-A158-BF63548CAE57}
 		{0913D2C5-3F7F-4972-AB2F-4435BC995B49} = {DC30EBD8-394C-4433-A158-BF63548CAE57}
 		{32B28878-D17B-46C6-B61E-7FF39B675153} = {DC30EBD8-394C-4433-A158-BF63548CAE57}
+		{814EFDDE-1CAE-4224-8AFE-444325FA00E9} = {DC30EBD8-394C-4433-A158-BF63548CAE57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {776C1706-DEEC-4528-BE19-A9589823DF5F}

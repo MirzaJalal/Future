@@ -1,4 +1,5 @@
 ﻿using Bangla.Services.EmailAPI.Data;
+using Bangla.Services.EmailAPI.Message;
 using Bangla.Services.EmailAPI.Models;
 using Bangla.Services.EmailAPI.Models.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,16 @@ namespace Bangla.Services.EmailAPI.Services
             message.AppendLine("</ul>");
 
             await LogAndEmail(message.ToString(), shoppingCartDto.CartHeader.Email);
+        }
+
+        public async Task OrderPlacedLog(RewardMessage rewardMessage)
+        {
+            StringBuilder message = new StringBuilder();
+
+            message.AppendLine("<br/> Order has been placed! <br/>");
+            message.AppendLine($"<br/>Your order Id is: {rewardMessage.OrderId} <br/>");
+
+            await LogAndEmail(message.ToString(), "mirzajalal.cse@gmail.com");
         }
 
         public async Task RegistrationUserEmailAndLog(string email)

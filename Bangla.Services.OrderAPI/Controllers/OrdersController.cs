@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bangla.MessageBus;
 using Bangla.Services.OrderAPI.Data;
 using Bangla.Services.OrderAPI.Models;
 using Bangla.Services.OrderAPI.Models.Dtos;
@@ -21,16 +22,22 @@ namespace Bangla.Services.OrderAPI.Controllers
         private readonly ApplicationDbContext _context;
         private IMapper _mapper;
         private IProductService _productService;
+        private readonly IMessageBus _messageBus;
+        IConfiguration _configuration;
         private readonly ILogger<OrdersController> _logger;
 
         public OrdersController(ApplicationDbContext context,
             IMapper mapper,
             IProductService productService,
+            IMessageBus messageBus,
+            IConfiguration configuration,
             ILogger<OrdersController> logger)
         {
             _responseDto = new ResponseDto();
             _context = context;
             _mapper = mapper;
+            _messageBus = messageBus;
+            _configuration = configuration;
             _productService = productService;
             _logger = logger;
         }
@@ -159,6 +166,16 @@ namespace Bangla.Services.OrderAPI.Controllers
                     orderHeader.Status = OrderUtility.Status.Approved.ToString();
 
                     _context.SaveChanges();
+
+                    RewardsDto rewardsDto = new RewardsDto() 
+                    { 
+                        OrderId = orderHeader.OrderHeaderId,
+                        RewardActivity = (int)orderHeader.OrderTotal,
+                        UserId = orderHeader.UserId
+                    };
+
+                    // sending rewardsDto to the azure Queue which is a multiple subcriber based bus
+                    await _messageBus.SendMessageAsync(rewardsDto, _configuration["AzureServiceBus:Ordercreated_TopicName"]);
 
                     _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
                 }
