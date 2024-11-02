@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangla.Services.RewardAPI.Data;
 using Bangla.Services.RewardAPI.Services;
 using Bangla.Services.RewardAPI.Messaging;
+using Bangla.Services.EmailAPI.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseAzureServiceBusReceiver();
 app.MapControllers();
 
 app.Run();
