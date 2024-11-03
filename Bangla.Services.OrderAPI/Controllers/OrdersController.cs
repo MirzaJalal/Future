@@ -245,5 +245,44 @@ namespace Bangla.Services.OrderAPI.Controllers
 
             return _responseDto;
         }
+
+
+        // TODO: Possible to optimize
+        [Authorize]
+        [HttpPost("UpdateOrderStatus")]
+        public async Task<ResponseDto> UpdateOrderStatus(int orderHeaderIdFromClient, [FromBody] string newStatus)
+        {
+            try
+            {
+                var orderHeader = _context.OrderHeaders.First(u => u.OrderHeaderId == orderHeaderIdFromClient);
+
+                if (orderHeader != null)
+                {
+                    if(newStatus == OrderUtility.Status.Cancelled.ToString())
+                    {
+                        // Refund using Stripe
+                        var options = new RefundCreateOptions()
+                        {
+                            Reason = RefundReasons.RequestedByCustomer,
+                            PaymentIntent = orderHeader.PaymentIntentId
+                        };
+
+                        var service = new RefundService();
+                        Refund refund = service.Create(options);
+                    }
+                    orderHeader.Status = newStatus;
+                    await _context.SaveChangesAsync();
+                }
+
+               _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
+            }
+            catch(Exception ex)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
     }
 }
