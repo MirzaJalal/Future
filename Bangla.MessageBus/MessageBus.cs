@@ -13,7 +13,7 @@ namespace Bangla.MessageBus
 
         public MessageBus(IConfiguration configuration)
         {
-            _connectionString = "Endpoint=sb://futurebanglashop.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=m5Q6zYyHg5lm3txykA0JS6qEOyP7yJlrN+ASbCyoOiA=";
+            _connectionString = "Endpoint=sb://futurebanglarestaurant.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=U7t7rjww+HGucA2w3CcwpojC/pzHBiyXe+ASbOKgJKw=";
         }
 
         // Sending Message to Service Bus
