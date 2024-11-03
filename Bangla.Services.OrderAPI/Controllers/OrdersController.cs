@@ -7,6 +7,7 @@ using Bangla.Services.OrderAPI.Utility;
 using Builder.Services.ShoppingCartAPI.Service.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using Stripe;
@@ -41,6 +42,60 @@ namespace Bangla.Services.OrderAPI.Controllers
             _productService = productService;
             _logger = logger;
         }
+
+        [Authorize]
+        [HttpGet("GetOrders")]
+        public async Task<ResponseDto> Get(string? userId = "")
+        {
+            try
+            {
+                List<OrderHeader> orderHeaders;
+
+                if (User.IsInRole(OrderUtility.RoleAdmin))
+                {
+                    orderHeaders = _context.OrderHeaders
+                        .Include(u => u.OrderDetails)
+                        .OrderByDescending(u => u.OrderHeaderId)
+                        .ToList();
+                }
+                else
+                {
+                    orderHeaders = _context.OrderHeaders
+                        .Include(u => u.OrderDetails)
+                        .Where(u => u.UserId == userId)
+                        .OrderByDescending(u => u.OrderHeaderId)
+                        .ToList();
+                }
+
+                _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeaders);
+
+            }
+            catch(Exception ex)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+            return _responseDto;
+        }
+
+        [Authorize]
+        [HttpGet("GetOrder/{id:int}")]
+        public async Task<ResponseDto> GetOrders(int id)
+        {
+            try
+            {
+               var orderHeader = _context.OrderHeaders.Include(u => u.OrderDetails).First(u => u.OrderHeaderId == id);
+
+                _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeader);
+            }
+            catch (Exception ex)
+            {
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+            return _responseDto;
+        }
+
         [Authorize]
         [HttpPost("CreateOrder")]
         public async Task<ResponseDto> CreateOrder([FromBody] ShoppingCartDto shoppingCartDto)
