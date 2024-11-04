@@ -80,7 +80,7 @@ namespace Bangla.Services.OrderAPI.Controllers
 
         [Authorize]
         [HttpGet("GetOrder/{id:int}")]
-        public async Task<ResponseDto> GetOrders(int id)
+        public async Task<ResponseDto> GetOrder(int id)
         {
             try
             {
@@ -249,7 +249,7 @@ namespace Bangla.Services.OrderAPI.Controllers
 
         // TODO: Possible to optimize
         [Authorize]
-        [HttpPost("UpdateOrderStatus")]
+        [HttpPost("UpdateOrderStatus/{orderHeaderIdFromClient:int}")]
         public async Task<ResponseDto> UpdateOrderStatus(int orderHeaderIdFromClient, [FromBody] string newStatus)
         {
             try
