@@ -67,7 +67,7 @@ namespace Bangla.Services.OrderAPI.Controllers
                         .ToList();
                 }
 
-                _responseDto.Result = _mapper.Map<OrderHeaderDto>(orderHeaders);
+                _responseDto.Result = _mapper.Map<List<OrderHeaderDto>>(orderHeaders);
 
             }
             catch(Exception ex)
