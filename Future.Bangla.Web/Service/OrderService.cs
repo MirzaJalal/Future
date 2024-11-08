@@ -47,7 +47,8 @@ namespace Future.Bangla.Web.Service
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = ApiType.GET,
-                Url = SD.OrderAPIBase + "/api/v1/orders/GetOrders/"+userId,
+                Data=userId,
+                Url = SD.OrderAPIBase + "/api/v1/orders/GetOrders/",
             });
         }
 
