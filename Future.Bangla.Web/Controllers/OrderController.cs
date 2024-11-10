@@ -19,6 +19,25 @@ namespace Future.Bangla.Web.Controllers
             return View();
         }
 
+        public async Task<IActionResult> OrderDetails(int orderId)
+        {
+            OrderHeaderDto orderHeaderDto = new OrderHeaderDto();
+
+            string userId = User.Claims.Where(u => u.Type == JwtRegisteredClaimNames.Sub)?.FirstOrDefault()?.Value;
+
+            ResponseDto? responseDto = await _orderService.GetOrder(orderId);
+
+            if(responseDto != null && responseDto.IsSuccess)
+            {
+                orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(responseDto.Result));
+            }
+            if(!User.IsInRole(SD.RoleAdmin.ToUpper()) && userId != orderHeaderDto.UserId) 
+            { 
+                return NotFound();
+            }
+            return View(orderHeaderDto);
+        }
+
         [HttpGet]
         public IActionResult GetAll () 
         { 
