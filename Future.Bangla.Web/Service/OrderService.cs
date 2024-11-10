@@ -58,7 +58,7 @@ namespace Future.Bangla.Web.Service
             {
                 ApiType = ApiType.POST,
                 Data = newStatus,
-                Url = SD.OrderAPIBase + "/api/v1/orders/UpdateOrderStatus"+ orderHeaderId,
+                Url = SD.OrderAPIBase + "/api/v1/orders/UpdateOrderStatus/"+ orderHeaderId,
             });
         }
 

@@ -63,5 +63,50 @@ namespace Future.Bangla.Web.Controllers
 
             return Json(new { data = orderHeaderList });
         }
+
+        [HttpPost("OrderReadyForPickup")]
+        public async Task<IActionResult> OrderReadyForPickup(int orderId)
+        {
+            ResponseDto response = _orderService.UpdateOrderStatus(orderId, OrderUtility.Status.ReadyForPickup.ToString()).GetAwaiter().GetResult();
+
+            if (response.IsSuccess && response != null)
+            {
+                TempData["success"] = "Status updated!";
+
+                return RedirectToAction(nameof(OrderDetails), new { orderId = orderId});
+            }
+
+            return View();
+        }
+
+        [HttpPost("CompleteOrder")]
+        public async Task<IActionResult> CompleteOrder(int orderId)
+        {
+            ResponseDto response = _orderService.UpdateOrderStatus(orderId, OrderUtility.Status.Completed.ToString()).GetAwaiter().GetResult();
+
+            if (response.IsSuccess && response != null)
+            {
+                TempData["success"] = "Status updated!";
+
+                return RedirectToAction(nameof(OrderDetails), new { orderId = orderId });
+            }
+
+            return View();
+        }
+
+        [HttpPost("CancelOrder")]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            ResponseDto response = _orderService.UpdateOrderStatus(orderId, OrderUtility.Status.Cancelled.ToString()).GetAwaiter().GetResult();
+
+            if (response.IsSuccess && response != null)
+            {
+                TempData["success"] = "Status updated!";
+
+                return RedirectToAction(nameof(OrderDetails), new { orderId = orderId });
+            }
+
+            return View();
+        }
     }
 }

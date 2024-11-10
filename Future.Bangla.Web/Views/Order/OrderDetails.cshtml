@@ -50,12 +50,15 @@
 
                             @if (User.IsInRole(SD.RoleAdmin.ToUpper()))
                             {
+                                @*
+                                TODO: StripePaymentSessionId can also be displayed
                                 <div class="row my-1">
                                     <div class="col-3">Session ID</div>
                                     <div class="col-9">
                                         <input asp-for="StripePaymentSessionId" readonly class="form-control" />
                                     </div>
-                                </div>
+                                </div> 
+                                *@
                                 <div class="row my-1">
                                     <div class="col-3">Payment Intent ID</div>
                                     <div class="col-9">
@@ -98,10 +101,20 @@
                                 <li class="list-group-item bg-primary">
                                     <div class="row container">
                                         <div class="col-6">
+                                            <p class="text-muted">Discount Applied </p>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <p class="text-success">- @Model.Discount.ToString("c")</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item bg-primary">
+                                    <div class="row container">
+                                        <div class="col-6">
                                             <h5 class="text-white">TOTAL </h5>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <h5 class="text-white">OrderTotal</h5>
+                                            <h5 class="text-white">@Model.OrderTotal.ToString("c")</h5>
                                         </div>
                                     </div>
                                 </li>
