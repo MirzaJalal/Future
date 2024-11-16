@@ -2,6 +2,7 @@
 using Bangla.Services.ProductAPI.Data;
 using Bangla.Services.ProductAPI.Models;
 using Bangla.Services.ProductAPI.Models.Dto;
+using Bangla.Services.ProductAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +13,13 @@ namespace Bangla.Services.ProductAPI.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
+        private readonly IStorageService _blobStorageService;
         private ProductResponseDto _response;
         private IMapper _mapper;
-        public ProductsController(ApplicationDbContext db, IMapper mapper)
+        public ProductsController(ApplicationDbContext db, IStorageService blobStorageService, IMapper mapper)
         {
             _db = db;
+            _blobStorageService = blobStorageService;
             _mapper = mapper;
             _response = new ProductResponseDto();
         }
@@ -60,15 +63,26 @@ namespace Bangla.Services.ProductAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
-        public ProductResponseDto Post([FromBody] ProductDto Product)
+        public async Task<ProductResponseDto> Post([FromForm] ProductDto Product)
         {
             try
             {
-                var ProductObj = _mapper.Map<Product>(Product);
-                _db.Products.Add(ProductObj);
-                _db.SaveChanges();
+                string imageUrlFromBlob = null;
 
-                _response.Result = _mapper.Map<ProductDto>(ProductObj); ;
+                if (Product.ImageFile is not null)
+                {
+                    imageUrlFromBlob = await _blobStorageService.UploadFileAsync(Product.ImageFile);
+                }
+
+                var ProductObj = _mapper.Map<Product>(Product);
+                ProductObj.ImageUrl = imageUrlFromBlob;
+
+                await _db.Products.AddAsync(ProductObj);
+                await _db.SaveChangesAsync();
+
+                var responseDto = _mapper.Map<ProductDto>(ProductObj);
+                _response.Result = responseDto;
+                _response.IsSuccess = true;
             }
             catch (Exception ex)
             {
@@ -81,11 +95,20 @@ namespace Bangla.Services.ProductAPI.Controllers
 
         [HttpPut]
         [Authorize(Roles = "ADMIN")]
-        public ProductResponseDto Update([FromBody] ProductDto Product)
+        public ProductResponseDto Update([FromForm] ProductDto Product)
         {
             try
             {
+                string imageUrlFromBlob = null;
+
+                if (Product.ImageFile is not null)
+                {
+                    imageUrlFromBlob =  _blobStorageService.UploadFileAsync(Product.ImageFile).GetAwaiter().GetResult();
+                }
+
                 var ProductObj = _mapper.Map<Product>(Product);
+                ProductObj.ImageUrl = imageUrlFromBlob;
+
                 _db.Products.Update(ProductObj);
                 _db.SaveChanges();
 
