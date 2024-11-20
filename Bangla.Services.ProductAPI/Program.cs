@@ -2,6 +2,7 @@ using AutoMapper;
 using Bangla.Services.ProductAPI;
 using Bangla.Services.ProductAPI.Data;
 using Bangla.Services.ProductAPI.Extensions;
+using Bangla.Services.ProductAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -17,6 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); // available throughout the lifecycle
+builder.Services.AddScoped<IStorageService, AzureBlobStorageService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // to use in the DI
 
 builder.Services.AddControllers();

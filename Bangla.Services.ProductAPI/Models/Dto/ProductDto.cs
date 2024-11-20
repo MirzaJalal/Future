@@ -8,5 +8,7 @@
         public string Description { get; set; }
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; }
+        public IFormFile ImageFile { get; set; }
+
     }
 }
