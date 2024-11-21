@@ -27,7 +27,15 @@ namespace Future.Bangla.Web.Service
                 HttpClient client = _httpClientFactory.CreateClient("FutureBanglaAPI"); // create client
                 HttpRequestMessage message = new HttpRequestMessage(); // configuration methods object
 
-                message.Headers.Add("Accept","application/json");
+                if(requestDto.ContentType == ContentType.MulipartFromData)
+                {
+                    message.Headers.Add("Accept", "*/*");
+                }
+                else
+                {
+                    message.Headers.Add("Accept","application/json");
+                }
+
                
                 // token based auth for later
                 if(withBearer)
@@ -37,10 +45,38 @@ namespace Future.Bangla.Web.Service
                 }
 
                 message.RequestUri = new Uri(requestDto.Url);
-            
-                if(requestDto.Data is not null) 
+
+                if(requestDto.ContentType == ContentType.MulipartFromData)
                 {
-                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                    var content = new MultipartFormDataContent();
+
+                    foreach(var property in requestDto.Data.GetType().GetProperties())
+                    {
+                        var value = property.GetValue(requestDto.Data);
+
+                        if(value is FormFile)
+                        {
+                            var file = (FormFile)value;
+
+                            if(file != null)
+                            {
+                                content.Add(new StreamContent(file.OpenReadStream()), property.Name, file.FileName);
+                            }
+                        }
+                        else
+                        {
+                            content.Add(new StringContent(value == null ? "" : value.ToString()), property.Name);
+                        }
+
+                        message.Content = content;
+                    }
+                }
+                else
+                {
+                    if(requestDto.Data is not null) 
+                    {
+                        message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                    }
                 }
 
                 HttpResponseMessage? apiResponse = null;

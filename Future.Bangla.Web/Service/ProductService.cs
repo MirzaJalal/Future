@@ -21,6 +21,7 @@ namespace Future.Bangla.Web.Service
                 ApiType = ApiType.POST,
                 Data = productDto,
                 Url = SD.ProductAPIBase + "/api/products",
+                ContentType = SD.ContentType.MulipartFromData
             });
         }
 
@@ -67,6 +68,7 @@ namespace Future.Bangla.Web.Service
                 ApiType = ApiType.PUT,
                 Data = productDto,
                 Url = SD.ProductAPIBase + "/api/products/",
+                ContentType = SD.ContentType.MulipartFromData
             });
         }
     }

@@ -9,7 +9,7 @@ namespace Bangla.Services.OrderAPI.Models.Dtos
         public double Price { get; set; }
         public string Description { get; set; }
         public string CategoryName { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public int Count { get; set; } = 1;
     }
 }
