@@ -48,7 +48,7 @@ namespace Future.Bangla.Web.Service
             {
                 ApiType = ApiType.GET,
                 Data=userId,
-                Url = SD.OrderAPIBase + "/api/v1/orders/GetOrders/",
+                Url = SD.OrderAPIBase + "/api/v1/orders/GetOrders",
             });
         }
 
