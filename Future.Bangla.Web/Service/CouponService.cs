@@ -66,7 +66,7 @@ namespace Future.Bangla.Web.Service
             {
                 ApiType = ApiType.PUT,
                 Data = couponDto,
-                Url = SD.CouponAPIBase + "/api/coupons/",
+                Url = SD.CouponAPIBase + "/api/coupons",
             });
         }
     }
